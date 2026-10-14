@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "deploy:mamp": "npm run build && mkdir -p /Applications/MAMP/htdocs && rm -rf /Applications/MAMP/htdocs/* && cp -r dist/* /Applications/MAMP/htdocs/ && cp dist/.[!.]* /Applications/MAMP/htdocs/ 2>/dev/null || true && echo \"✔ Deployed to MAMP htdocs successfully!\""
+    "deploy:mamp": "npm run build && mkdir -p /Applications/MAMP/htdocs && rm -rf /Applications/MAMP/htdocs/* && cp -r dist/* /Applications/MAMP/htdocs/ && (cp dist/.[!.]* /Applications/MAMP/htdocs/ 2>/dev/null || true) && echo \"✔ Deployed to MAMP htdocs successfully!\""
   },
   "dependencies": {
     "lucide-react": "^1.56.0",
