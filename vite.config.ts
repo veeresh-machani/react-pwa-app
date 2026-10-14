@@ -41,8 +41,6 @@ export default defineConfig({
         ]
       },
       workbox: {
-        skipWaiting: true,
-        clientsClaim: true,
         dontCacheBustURLsMatching: /\.\w{8}\./,
         globPatterns: ['assets/**/*.{js,css,png,svg,ico}', 'index.html', '*.webmanifest'],
         globIgnores: ['**/node_modules/**/*', 'sw.js'],

@@ -24,17 +24,18 @@ The demo UI is a contact form on purpose: you can be mid-typing when an update l
 
 ## How this repo handles updates
 
-1. **Activate in the background** — `vite.config.ts` sets `skipWaiting: true` and `clientsClaim: true` so the new worker takes over as soon as it installs (refresh then loads the new build).
-2. **Detect updates while the tab stays open** — `VersionContext.tsx` uses `useRegisterSW` from `virtual:pwa-register/react` and polls `reg.update()` every 10 seconds.
-3. **Prompt without force-reload** — On `controllerchange`, if the page already had a controller (`hadController`), `LatestVersion.tsx` offers **Update** or **Remind me Later** (1-hour snooze).
+1. **Precache and wait in the background** — `vite.config.ts` sets `registerType: 'prompt'` with `skipWaiting: false` and `clientsClaim: false`. The new worker installs and precaches new assets, but stays in the waiting state without hijacking the active page.
+2. **Detect updates while the tab stays open** — `VersionContext.tsx` uses `useRegisterSW` from `virtual:pwa-register/react` and polls `reg.update()` every 10 seconds. When a new worker finishes installing, `needRefresh` becomes true.
+3. **Prompt the user** — `LatestVersion.tsx` offers **Update** or **Remind me Later** (1-hour snooze). Clicking **Update** calls `updateServiceWorker(true)` to activate the waiting worker and reload cleanly. Clicking **Remind me Later** keeps the user safely on their current version without unexpected disruptions.
 
 Workbox also uses `cleanupOutdatedCaches`, NetworkFirst for documents (and `/api/`), and hashed-asset caching via `dontCacheBustURLsMatching`.
 
 ---
 
-## Setup
+## Prerequisites & Setup
 
-Requires Node.js 18+. Service workers only work on `localhost` or HTTPS.
+- **Node.js**: Requires Node.js 18+ (tested on Node 20/22/24).
+- **MAMP (Optional)**: Only needed if you choose to deploy and test with Apache on macOS. Download from [mamp.info](https://www.mamp.info/).
 
 ```bash
 npm install
@@ -61,14 +62,15 @@ Open the URL Vite prints (usually `http://localhost:4173`). Leave this terminal 
 
 **Option B — MAMP (macOS)**
 
-1. Start MAMP (Apache on, default `http://localhost:8888`).
-2. Deploy:
+1. **Prerequisite**: Ensure [MAMP](https://www.mamp.info/) is installed.
+2. Launch the **MAMP** application and click **"Start Servers"** (starts Apache, default: `http://localhost:8888`).
+3. Deploy to MAMP's web root (`/Applications/MAMP/htdocs`):
 
 ```bash
 npm run deploy:mamp
 ```
 
-3. Open `http://localhost:8888` (or your MAMP host/port).
+4. Open `http://localhost:8888` (or your configured MAMP host/port) in your browser.
 
 ### 2. Confirm the first load is controlled
 
